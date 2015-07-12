@@ -27,6 +27,7 @@
 		this._holder = $( "#" + placeholderID );
 		this._items = this._container.children();
 		this._matrix = [];
+		this._sticky = []; //Ben:arry to store index
 		this._fields = {};
 		this._order = []; // helper to get the right field order
 		this._menu = {};
@@ -64,6 +65,14 @@
 
 			for ( i = 0 ; i < attr.length; i++ ) {
 				name = attr[i].name;
+				
+				//Ben:save index of sticky
+				if(name == "sticky"){
+				    if( this._sticky.indexOf(this._matrix.length) == -1 ){ 
+						this._sticky.push( this._matrix.length );
+					}
+				}
+				
 				if ( name.indexOf( "data-" ) === 0 && $.inArray( name, this.options.block ) === -1 ) {
 					field = name.replace(/data-/gi, "").replace(/-/gi, " ");
 					tags = element.getAttribute( name ).split(", ");
@@ -83,7 +92,7 @@
 					};
 				};
 			};
-
+			
 			this._matrix.push( data );
 
 		}, this ) );
@@ -170,8 +179,17 @@
 		}, this) );
 
 		this._menu[f].label.on("click", this._bind(function(event){
-			this.openPanel( f );
-			this.bringToFront( f );
+		    
+			//Ben:If filter is opened
+			if($(event.target).hasClass('ft-opened')){
+				//Ben:Fix multiple dropdowns at a time
+				$('.ft-panel').addClass("ft-hidden");$('.ft-label').removeClass("ft-opened");				
+			}else{
+				$('.ft-panel').addClass("ft-hidden");$('.ft-label').removeClass("ft-opened");
+				this.openPanel( f );
+				this.bringToFront( f );				
+			}
+			
 			event.stopPropagation();
 		}, this) );
 
@@ -326,7 +344,7 @@
 			.children()
 			.not(this._menu[f].active)
 			.each(function() {
-				if ( ( this.textContent || this.innerText ).toUpperCase().indexOf( txt.toUpperCase() ) >= 0 ) {
+				if ( ( this.textContent || this.innerText ).toUpperCase().indexOf( txt.toUpperCase() ) == 0 ) {
 					$(this).removeClass("ft-hidden");
 					results = results + 1;
 				} else {
@@ -416,15 +434,18 @@
 
 	Filtrify.prototype.filter = function () {
 		var f, r, t, c, m;
-
+		
 		this.resetCachedMatch();
 
 		for ( r = this._matrix.length - 1; r >= 0; r-- ) {
-
+			
+			//R is matrix index
+		
 			m = true;
-
+			
+			//F is date-XXXX
 			for ( f in this._query ) {
-
+					
 				c = 0;
 				
 				for ( t = this._query[f].length - 1; t >= 0; t-- ) {
@@ -440,6 +461,10 @@
 				};
 
 			};
+			
+			//Ben Check sticky array
+			if(this._sticky.indexOf(r) != -1 ){m=true};
+			
 
 			this.updateFields( r, m );
 			this.cacheMatch( r, m );
