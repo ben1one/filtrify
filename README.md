@@ -40,6 +40,11 @@ IE8+, Chrome, Firefox, Opera and Safari (current versions)
 
 ## Release log:  
 
+####v0.2(K&D) (13.07.2015)  
+* Hacked vesrion for K&D project
+* Adding attr "sticky" will pass through the match function
+* Filter panel will be cloed if user clicks on any of the filters 
+
 #####v0.2 (04.04.2012)  
 * Isotope integration demo added  
 * Bug fix: search icon disappearance issue in the "jPages" demo
