@@ -461,14 +461,19 @@
 				};
 
 			};
-			
+
+			this.updateFields( r, m );	
+							
 			//Ben Check sticky array
-			if(this._sticky.indexOf(r) != -1 ){m=true};
+			if(this._sticky.indexOf(r) != -1 ){
+				this.cacheMatch( r, true );	
+				this.showMatch( r, true );
+			}else{
+				this.cacheMatch( r, m );	
+				this.showMatch( r, m );
+			}
 			
 
-			this.updateFields( r, m );
-			this.cacheMatch( r, m );
-			this.showMatch( r, m );
 
 		};
 
